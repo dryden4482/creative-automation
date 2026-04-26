@@ -1,0 +1,10 @@
+{
+  "campaign_name": "Autumn Reset",
+  "market": "US",
+  "audience": "Busy professionals",
+  "campaign_message": "Reset your routine with clean daily essentials",
+  "products": [
+    { "product_name": "Daily Serum" },
+    { "product_name": "Night Cream" }
+  ]
+}

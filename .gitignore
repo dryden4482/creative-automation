@@ -201,6 +201,10 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
+# Creative automation runtime artifacts
+.gcp/
+data/campaigns/
+
 # Marimo
 marimo/_static/
 marimo/_lsp/
