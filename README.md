@@ -4,7 +4,7 @@ Small FastAPI backend that accepts a campaign brief, stores uploaded assets loca
 
 ## Design Considerations
 
-TThe primary design goal was to keep the implementation simple, focused, and easy to reason about. Rather than building a fully featured production system, I prioritized a lightweight workflow that satisfies the core requirements of the brief while avoiding unnecessary infrastructure and complexity.
+The primary design goal was to keep the implementation simple, focused, and easy to reason about. Rather than building a fully featured production system, I prioritized a lightweight workflow that satisfies the core requirements of the brief while avoiding unnecessary infrastructure and complexity.
 
 GCP was selected because it provides straightforward access to Gemini through Vertex AI. Using the Vertex API kept the model integration relatively direct and avoided adding additional abstraction layers or third-party orchestration tools. This also made the implementation easier to configure, test, and extend if more model functionality is needed later.
 
@@ -12,7 +12,7 @@ For the brief itself, I intentionally limited the data model to a small set of c
 
 The application does not use a database or any robust persistence layer. Instead, it relies on simple file operations for storing and retrieving data. This is sufficient for a small prototype or local workflow, but it does come with tradeoffs. File-based storage is easier to inspect and debug, but it does not provide the reliability, concurrency handling, query capabilities, or access controls that a database would offer.
 
-The asset upload flow was also kept intentionally simple. The system does not handle base64-encoded uploads or multipart upload streams. Instead, assets are “uploaded” by passing in a file path and moving the file into the appropriate directory. This approach works well for a controlled local environment, but it would need to be redesigned for a production deployment where users upload files through a web interface or API.
+The asset upload flow was also kept intentionally simple. Assets are uploaded with standard `multipart/form-data` requests, and the API saves the received file bytes into the campaign's local `assets/` directory. The server does not read a client-side file path; tools like `curl` read the file on the machine where the command is running and send the file contents over HTTP. This works against a remote API server as long as the file path exists on the client machine making the request.
 
 Overall, the design favors clarity and minimalism over scalability. The current structure is appropriate for demonstrating the core workflow, but future iterations could introduce stronger storage, better upload handling, validation, authentication, and more robust error handling as the system requirements become more complex.
 
@@ -63,6 +63,8 @@ curl -X POST http://localhost:8000/campaigns/{campaign_id}/assets \
   -F "files=@examples/product_a.jpg" \
   -F "files=@examples/logo.png"
 ```
+
+The `@` syntax is handled by `curl`: it reads the local file and sends its bytes in the request. If `http://localhost:8000` is replaced with a remote API URL, the upload still works; the paths after `@` only need to exist on the computer running `curl`, not on the server.
 
 3. Run pipeline
 
